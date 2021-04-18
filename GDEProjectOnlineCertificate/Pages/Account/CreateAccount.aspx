@@ -45,17 +45,44 @@
 										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtIdNumber" CssClass="text-danger" ErrorMessage="The ID/PassportNumber field is required." />
 									</div>
 									<div class="form-group">
-										Password
-							<a href="ForgotPassword.aspx" style="float: right; font-size: 14px;">Forgot password?</a>
-										<asp:TextBox ID="Password" runat="server" CssClass="form-control" placeholder="Password" TextMode="Password" />
-										<asp:RequiredFieldValidator runat="server" ControlToValidate="Password" CssClass="text-danger" ErrorMessage="The password field is required." />
+										First Name
+							<asp:TextBox ID="txtFName" runat="server" CssClass="form-control" placeholder="First Name" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtFName" CssClass="text-danger" ErrorMessage="Last Name field is required." />
 									</div>
-									<asp:Button ID="Button1" OnClick="btnlogin_Click" runat="server" CssClass="btn btn-primary btn-user btn-block" Text="Create Account"></asp:Button>
+									<div class="form-group">
+										Last Name
+							<asp:TextBox ID="txtLName" runat="server" CssClass="form-control" placeholder="Last Name" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtLName" CssClass="text-danger" ErrorMessage="Last Name field is required." />
+									</div>
+									<div class="form-group">
+										Cell Number
+							<asp:TextBox ID="txtCell" runat="server" CssClass="form-control" placeholder="Cell Number" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtCell" CssClass="text-danger" ErrorMessage="Cell Number field is required." />
+									</div>
+									<div class="form-group">
+										Email Adrress
+							<asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" placeholder="Email Address" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtEmail" CssClass="text-danger" ErrorMessage="Email field is required." />
+									</div>
+									<div class="form-group">
+										Password
+							
+										<asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" placeholder="Password" TextMode="Password" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtPassword" CssClass="text-danger" ErrorMessage="The password field is required." />
+									</div>
+										<div class="form-group">
+										Confirm Password
+							
+										<asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-control" placeholder="Password" TextMode="Password" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtConfirmPassword" CssClass="text-danger" ErrorMessage="Comform password field is required." />
+									</div>
+									<asp:Button ID="btnCreateAcc" OnClick="btnCreate_Click" runat="server" CssClass="btn btn-primary btn-user btn-block" Text="Create Account"></asp:Button>
 								</div>
+                                <asp:Label ID="lblMessage" runat="server" Text="" BackColor="#CC3300"></asp:Label>
 								<hr />
 								<div class="card-body">
 									<div class="form-group mb-0">
-										Don't have an account?<a href="CreateAccount.aspx">Create One</a>
+										Already have an account?<a href="Login.aspx">Login</a>
 									</div>
 								</div>
 							</div>

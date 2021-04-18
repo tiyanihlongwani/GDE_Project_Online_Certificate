@@ -40,11 +40,12 @@
 									<div class="form-group">
 										Password
 							<a href="ForgotPassword.aspx" style="float: right; font-size: 14px;">Forgot password?</a>
-										<asp:TextBox ID="Password" runat="server" CssClass="form-control" placeholder="Password" TextMode="Password" />
-										<asp:RequiredFieldValidator runat="server" ControlToValidate="Password" CssClass="text-danger" ErrorMessage="The password field is required." />
+										<asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" placeholder="Password" TextMode="Password" />
+										<asp:RequiredFieldValidator runat="server" ControlToValidate="txtPassword" CssClass="text-danger" ErrorMessage="The password field is required." />
 									</div>
-									<asp:Button ID="Button1" OnClick="btnlogin_Click" runat="server" CssClass="btn btn-primary btn-user btn-block" Text="Sign in"></asp:Button>
+									<asp:Button ID="btnLogin" OnClick="btnlogin_Click" runat="server" CssClass="btn btn-primary btn-user btn-block" Text="Login"></asp:Button>
 								</div>
+								<asp:Label ID="lblMessage" runat="server" Text="" BackColor="#CC3300"></asp:Label>
 								<hr />
 								<div class="card-body">
 									<div class="form-group mb-0">
