@@ -37,7 +37,7 @@ namespace GDEProjectOnlineCertificate.Pages
 
         public static string Decrypt(string cipherText)
         {
-            string EncryptionKey = "0ram@1234iiiiio";  //we can change the code converstion key as per our requirement, but the decryption key should be same as encryption key    
+            string EncryptionKey = "0ram@1234iiiiiod";  //we can change the code converstion key as per our requirement, but the decryption key should be same as encryption key    
             cipherText = cipherText.Replace(" ", "+");
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
 

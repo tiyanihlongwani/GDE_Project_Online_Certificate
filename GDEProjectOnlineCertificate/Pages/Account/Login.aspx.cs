@@ -5,6 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
 
 
 namespace GDEProjectOnlineCertificate.Pages.Account
@@ -15,43 +18,36 @@ namespace GDEProjectOnlineCertificate.Pages.Account
         {
 
         }
-        SqlConnection con = new SqlConnection("Data Source=DESKTOP-JU6GD4E\\SQLEXPRESS;Initial Catalog=dbOnlineCertification;Integrated Security=True");
+        
 
         protected void btnlogin_Click(object sender, EventArgs e)
         {
 
-            
-                string Password = "";
-                bool IsExist = false;
-                con.Open();
-                SqlCommand cmd = new SqlCommand("select * from tblUserRegistration where userIDNumber='" + txtIDNumber.Text + "'", con);
-                SqlDataReader sdr = cmd.ExecuteReader();
-                if (sdr.Read())
-                {
-                    Password = sdr.GetString(2);  //get the user password from db if the user name is exist in that.  
-                    IsExist = true;
-                }
-                con.Close();
-                if (IsExist)  //if record exis in db , it will return true, otherwise it will return false  
-                {
-                    if (Cryptography.Decrypt(Password).Equals(txtPassword.Text))
-                    {
-                   
-                    Response.Redirect("../OnlineCertificate/HomePage.aspx");
-                }
-                    else
-                    {
-                     
-                    lblMessage.Text = "Password incorrect!!!";
-                    }
 
-                }
-                else  //showing the error message if user credential is wrong  
-                {
-                lblMessage.Text = "Please enter  valid credentials";
-                 
-                }
+            var userStore = new UserStore<IdentityUser>();
+            var userManager = new UserManager<IdentityUser>(userStore);
+            var user = userManager.Find(txtIDNumber.Text, txtPassword.Text);
 
+            if (user != null)
+            {
+                var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+
+                authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = false }, userIdentity);
+                Response.Redirect("../OnlineCertificate/HomePage.aspx");
             }
+            else
+            {
+                lblMessage.Text = "Invalid username or password.";
+                //LoginStatus.Visible = true;
+            }
+
         }
+       /* protected void SignOut(object sender, EventArgs e)
+        {
+            var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+            authenticationManager.SignOut();
+            Response.Redirect("~/Login.aspx");
+        }*/
+    }
     }   

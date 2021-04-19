@@ -10,6 +10,9 @@ using System.Drawing;
 using System.Configuration;
 using System.Text;
 using System.Data.SqlClient;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
 
 namespace GDEProjectOnlineCertificate.Pages.Account
 {
@@ -20,66 +23,50 @@ namespace GDEProjectOnlineCertificate.Pages.Account
 
         }
 
-        SqlConnection sqlCon = new SqlConnection("Data Source=DESKTOP-JU6GD4E\\SQLEXPRESS;Initial Catalog=dbOnlineCertification;Integrated Security=True");
-     
+         SqlConnection sqlCon = new SqlConnection(@"Data Source=DESKTOP-JU6GD4E\SQLEXPRESS;Initial Catalog=DefaultConnection;Integrated Security=True");
+       
 
         protected void btnCreate_Click(object sender, EventArgs e)
-        {
-            string FName = txtFName.Text;
-            string LName = txtLName.Text;
-            string Email = txtFName.Text;
-            // Passing the Password to Encrypt method and the method will return encrypted string and stored in Password variable. 
-            string Password = Cryptography.Encrypt(txtPassword.Text.ToString()); 
-            string IDNumber = txtIDNumber.Text.ToString();
-            string Cell = txtCell.Text.ToString();
+        { // Default UserStore constructor uses the default connection string named: DefaultConnection
+            var userStore = new UserStore<IdentityUser>();
+            var manager = new UserManager<IdentityUser>(userStore);
 
-
-            //validating the fields whether the fields are empty or not  
-            if (txtFName.Text !="" && txtLName.Text != "" && txtEmail.Text!= "" && txtCell.Text != "" && txtIDNumber.Text != "" && txtPassword.Text != "" && txtConfirmPassword.Text != "")
+            var user = new IdentityUser() { UserName = txtIDNumber.Text};
+           
+         
+            IdentityResult result = manager.Create(user, txtPassword.Text);
+         
+            if (result.Succeeded)
             {
-                //validating Password textbox and confirm password textbox is match or unmatch
-                if (txtPassword.Text.ToString().Trim().ToLower() == txtConfirmPassword.Text.ToString().Trim().ToLower())     
+
+                
+
+                    var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+                    var userIdentity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    authenticationManager.SignIn(new AuthenticationProperties() { }, userIdentity);
+                using (sqlCon)
                 {
-
-
-                    try
-                    {
-                        using (sqlCon)
-                        {
-
-
-                            sqlCon.Open();
-                            SqlCommand sql_cmnd = new SqlCommand("PROC_Registration", sqlCon);
-                            sql_cmnd.CommandType = CommandType.StoredProcedure;
-                            sql_cmnd.Parameters.AddWithValue("@userIDNumber", SqlDbType.BigInt).Value = IDNumber;
-                            sql_cmnd.Parameters.AddWithValue("@FName", SqlDbType.VarChar).Value = FName;
-                            sql_cmnd.Parameters.AddWithValue("@LName", SqlDbType.VarChar).Value = LName;
-                            sql_cmnd.Parameters.AddWithValue("@Email", SqlDbType.NVarChar).Value = Email;
-                            sql_cmnd.Parameters.AddWithValue("@CellNumber", SqlDbType.Int).Value = Cell;
-                            sql_cmnd.Parameters.AddWithValue("@userPassword", SqlDbType.NVarChar).Value = Password;
-                            sql_cmnd.ExecuteNonQuery();
-                            sqlCon.Close();
-                        }
-                    }
-                    catch (Exception ee) 
-                    {
-                        lblMessage.Text = "An error Occured!!! ";
-                    }
-                    
+                    sqlCon.Open();
+                    SqlCommand sql_cmnd = new SqlCommand("PROC_Registration", sqlCon);
+                    sql_cmnd.CommandType = CommandType.StoredProcedure;
+                    sql_cmnd.Parameters.AddWithValue("@userIDNumber", SqlDbType.BigInt).Value = txtIDNumber.Text;
+                    sql_cmnd.Parameters.AddWithValue("@FName", SqlDbType.VarChar).Value = txtFName.Text;
+                    sql_cmnd.Parameters.AddWithValue("@LName", SqlDbType.VarChar).Value = txtLName.Text;
+                    sql_cmnd.Parameters.AddWithValue("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
+                    sql_cmnd.Parameters.AddWithValue("@Cell", SqlDbType.VarChar).Value = txtCell.Text;
+                   
                     Response.Redirect("../Account/Login.aspx");
+                    sql_cmnd.ExecuteNonQuery();
+                    sqlCon.Close();
                 }
-                else
-                {
-                    lblMessage.Text = "Password and Confirm Password doesn't match!";
                   
-                }
             }
             else
             {
-                 
-                lblMessage.Text= "Please Fill all the fields!";
-                
+               lblMessage.Text = result.Errors.FirstOrDefault();
             }
+            
+
         }
 
         
