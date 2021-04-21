@@ -72,6 +72,9 @@ namespace GDEProjectOnlineCertificate
         protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
         {
             // Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+            authenticationManager.SignOut();
+            Response.Redirect("../Account/Login.aspx");
         }
     }
 

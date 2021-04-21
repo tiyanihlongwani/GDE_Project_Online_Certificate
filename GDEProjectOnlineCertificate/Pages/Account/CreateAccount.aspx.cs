@@ -24,10 +24,15 @@ namespace GDEProjectOnlineCertificate.Pages.Account
         }
 
          SqlConnection sqlCon = new SqlConnection(@"Data Source=DESKTOP-JU6GD4E\SQLEXPRESS;Initial Catalog=DefaultConnection;Integrated Security=True");
-       
+
+       //  dynamic sqlCon = ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
+      
 
         protected void btnCreate_Click(object sender, EventArgs e)
-        { // Default UserStore constructor uses the default connection string named: DefaultConnection
+
+        {
+            // Default UserStore constructor uses the default connection string named: DefaultConnection
+           // string sqlCon = ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
             var userStore = new UserStore<IdentityUser>();
             var manager = new UserManager<IdentityUser>(userStore);
 
@@ -44,22 +49,30 @@ namespace GDEProjectOnlineCertificate.Pages.Account
                     var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
                     var userIdentity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                     authenticationManager.SignIn(new AuthenticationProperties() { }, userIdentity);
-                using (sqlCon)
+                try
                 {
-                    sqlCon.Open();
-                    SqlCommand sql_cmnd = new SqlCommand("PROC_Registration", sqlCon);
-                    sql_cmnd.CommandType = CommandType.StoredProcedure;
-                    sql_cmnd.Parameters.AddWithValue("@userIDNumber", SqlDbType.BigInt).Value = txtIDNumber.Text;
-                    sql_cmnd.Parameters.AddWithValue("@FName", SqlDbType.VarChar).Value = txtFName.Text;
-                    sql_cmnd.Parameters.AddWithValue("@LName", SqlDbType.VarChar).Value = txtLName.Text;
-                    sql_cmnd.Parameters.AddWithValue("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
-                    sql_cmnd.Parameters.AddWithValue("@Cell", SqlDbType.VarChar).Value = txtCell.Text;
-                   
-                    Response.Redirect("../Account/Login.aspx");
-                    sql_cmnd.ExecuteNonQuery();
-                    sqlCon.Close();
+                    using (sqlCon)
+                    {
+                        sqlCon.Open();
+                        SqlCommand sql_cmnd = new SqlCommand("PROC_Registration", sqlCon);
+                        //  sql_cmnd.CommandType = CommandType.StoredProcedure;
+                        sql_cmnd.CommandType = System.Data.CommandType.StoredProcedure;
+                        sql_cmnd.Parameters.AddWithValue("@userIDNumber", SqlDbType.BigInt).Value = txtIDNumber.Text;
+                        sql_cmnd.Parameters.AddWithValue("@FName", SqlDbType.VarChar).Value = txtFName.Text;
+                        sql_cmnd.Parameters.AddWithValue("@LName", SqlDbType.VarChar).Value = txtLName.Text;
+                        sql_cmnd.Parameters.AddWithValue("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
+                        sql_cmnd.Parameters.AddWithValue("@Cell", SqlDbType.VarChar).Value = txtCell.Text;
+
+                        //Response.Redirect("../Account/Login.aspx");
+                        sql_cmnd.ExecuteNonQuery();
+                        sqlCon.Close();
+                    }
                 }
-                  
+                catch (Exception ee) 
+                {
+                    lblMessage.Text = ""+ee;
+                }
+               Response.Redirect("../Account/Login.aspx");
             }
             else
             {

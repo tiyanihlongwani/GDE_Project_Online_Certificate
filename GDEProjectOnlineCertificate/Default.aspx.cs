@@ -19,7 +19,7 @@ namespace GDEProjectOnlineCertificate
         protected void btnCreateAccount_Click(object sender, EventArgs e)
         {
 
-            Response.Redirect("/Pages/Account/LoginPage.aspx");
+            Response.Redirect("/Pages/Account/CreateAccount.aspx");
         }
 
         protected void btnHome_Click(object sender, EventArgs e)
